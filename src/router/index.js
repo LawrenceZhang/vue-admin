@@ -47,12 +47,12 @@ export const asyncRouterMap = [
   },
 
   {
-    path: '/table',
+    path: '/users',
     component: Layout,
-    redirect: '/table/index',
-    icon: 'tubiao',
+    redirect: '/users/index',
+    icon: 'peoples',
     noDropdown: true,
-    children: [{ path: 'index', name: 'Table', component: _import('table/index'), meta: { role: ['admin'] }}]
+    children: [{ path: 'index', name: '用户管理', component: _import('users/index'), meta: { role: ['admin'] }}]
   },
 
   { path: '*', redirect: '/404', hidden: true }

@@ -1,4 +1,4 @@
-import fetch from '@/utils/fetch'
+import fetch from '@/utils/fetchmock'
 
 export function login(username, password) {
   return fetch({

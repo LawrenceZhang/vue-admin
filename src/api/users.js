@@ -1,8 +1,8 @@
 import fetch from '@/utils/fetch'
 
-export function getList(params) {
+export function getUserInfoByAny(params) {
   return fetch({
-    url: '/table/list',
+    url: '/user',
     method: 'get',
     params
   })
