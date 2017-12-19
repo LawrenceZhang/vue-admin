@@ -102,8 +102,12 @@
 
 <script>
 import { getUserInfoByAny, getPetInfoByUserId } from '@/api/users'
+import waves from '@/directive/waves' // 水波纹指令
 
 export default {
+  directives: {
+    waves
+  },
   data() {
     return {
       userlist: [],
