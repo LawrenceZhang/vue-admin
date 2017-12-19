@@ -54,6 +54,14 @@ export const asyncRouterMap = [
     noDropdown: true,
     children: [{ path: 'index', name: '用户管理', component: _import('users/index'), meta: { role: ['admin'] }}]
   },
+  {
+    path: '/products',
+    component: Layout,
+    redirect: '/products/index',
+    icon: 'shoppingCard',
+    noDropdown: true,
+    children: [{ path: 'index', name: '商品管理', component: _import('products/index'), meta: { role: ['admin'] }}]
+  },
 
   { path: '*', redirect: '/404', hidden: true }
 ]

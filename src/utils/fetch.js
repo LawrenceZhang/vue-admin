@@ -5,7 +5,7 @@ import store from '../store'
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: 'http://www.zhang-xin.com.cn/lizhongzhong/v1', // api的base_url
+  baseURL: 'http://www.zhang-xin.com.cn/zhangxin/v1', // api的base_url
   timeout: 15000                  // 请求超时时间
 })
 

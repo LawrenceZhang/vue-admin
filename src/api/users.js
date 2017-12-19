@@ -7,3 +7,11 @@ export function getUserInfoByAny(params) {
     params
   })
 }
+
+export function getPetInfoByUserId(params) {
+  return fetch({
+    url: '/pet',
+    method: 'get',
+    params
+  })
+}
