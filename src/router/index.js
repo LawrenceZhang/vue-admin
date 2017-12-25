@@ -45,7 +45,14 @@ export const asyncRouterMap = [
       { path: 'index', name: 'Form', icon: 'zonghe', component: _import('page/form') }
     ]
   },
-
+  {
+    path: '/checkout',
+    component: Layout,
+    redirect: '/checkout/index',
+    icon: 'money',
+    noDropdown: true,
+    children: [{ path: 'index', name: '收银', component: _import('checkout/index'), meta: { role: ['admin'] }}]
+  },
   {
     path: '/users',
     component: Layout,
@@ -55,12 +62,31 @@ export const asyncRouterMap = [
     children: [{ path: 'index', name: '用户管理', component: _import('users/index'), meta: { role: ['admin'] }}]
   },
   {
+    path: '/users',
+    component: Layout,
+    redirect: '/users/detail',
+    hidden: false,
+    noDropdown: true,
+    children: [{ path: 'detail', name: '用户详情', component: _import('users/userdetail'), meta: { role: ['admin'] }}]
+  },
+  {
     path: '/products',
     component: Layout,
     redirect: '/products/index',
     icon: 'shoppingCard',
     noDropdown: true,
     children: [{ path: 'index', name: '商品管理', component: _import('products/index'), meta: { role: ['admin'] }}]
+  },
+  {
+    path: '/appointments',
+    component: Layout,
+    redirect: '/appointments/groom',
+    name: '预约管理',
+    icon: 'shoppingCard',
+    children: [
+      { path: 'groom', name: '美容预约', component: _import('appointments/groom'), meta: { role: ['admin'] }},
+      { path: 'hotel', name: '寄养预约', component: _import('appointments/hotel'), meta: { role: ['admin'] }}
+    ]
   },
 
   { path: '*', redirect: '/404', hidden: true }
