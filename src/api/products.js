@@ -2,7 +2,7 @@ import fetch from '@/utils/fetch'
 
 export function getProductList(params) {
   return fetch({
-    url: '/queryproduct',
+    url: '/product',
     method: 'get',
     params
   })
@@ -10,7 +10,7 @@ export function getProductList(params) {
 
 export function addProduct(data) {
   return fetch({
-    url: '/addproduct',
+    url: '/product',
     method: 'post',
     data
   })
@@ -18,24 +18,23 @@ export function addProduct(data) {
 
 export function updateProduct(data) {
   return fetch({
-    url: '/modifyproduct',
+    url: '/product',
     method: 'put',
     data
   })
 }
 
-export function deleteProduct(data) {
+export function deleteProduct(params) {
   return fetch({
-    url: '/deleteproduct',
-    method: 'delete',
-    data
+    url: '/product?id=' + params.id,
+    method: 'delete'
   })
 }
 
 export function modifyInventory(data) {
   return fetch({
-    url: '/modifyproductinventory',
-    method: 'delete',
+    url: '/productinventory',
+    method: 'put',
     data
   })
 }

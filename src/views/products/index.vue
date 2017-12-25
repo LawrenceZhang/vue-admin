@@ -44,7 +44,7 @@
           <el-button size="small" icon="edit" @click="updateProduct(scope.row)">编辑</el-button>
           <el-button size="small" @click="raiseInventory(scope.row.id)">入库</el-button>
           <el-button size="small" @click="reduceInventory(scope.row.id)">出库</el-button>
-          <el-button size="small" type="danger">删除</el-button>
+          <el-button size="small" type="danger" @click="deleteProduct(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -148,10 +148,12 @@ export default {
       this.dialogFormVisible = true
     },
     doCreateProduct() {
-      params = this.productParams
+      var params = this.productParams
       delete params.id
-      var data = Object.assign({}, this.params)
-      addProduct(data)
+      var data = Object.assign({}, params)
+      addProduct(data).then(response => {
+        this.dialogFormVisible = false
+      })
       this.fetchData()
     },
     updateProduct(product) {
@@ -162,7 +164,9 @@ export default {
     },
     doUpdateProduct() {
       var data = Object.assign({}, this.productParams)
-      updateProducts(data)
+      updateProduct(data).then(response => {
+        this.dialogFormVisible = false
+      })
       this.fetchData()
     },
     raiseInventory(productId) {
@@ -183,7 +187,9 @@ export default {
     },
     doModifyInventory() {
       var data = Object.assign({}, this.inventoryParams)
-      modifyInventory(data)
+      modifyInventory(data).then(response => {
+        this.modifyInventoryDialog.visible = false
+      })
       this.fetchData()
     },
     deleteProduct(productId) {
