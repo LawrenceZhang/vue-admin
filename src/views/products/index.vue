@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input @keyup.enter.native="fetchData" style="width: 200px;" class="filter-item" placeholder="名称，条形码，类型" v-model="queryParam.any">
+      <el-input @keyup.enter.native="queryProductInfos" style="width: 200px;" class="filter-item" placeholder="名称，条形码，类型" v-model="queryParam.any">
       </el-input>
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="fetchData">搜索</el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="queryProductInfos">搜索</el-button>
       <el-button @click="createProduct">新增商品</el-button>
     </div>
     <el-table :data="productlist" v-loading.body="listLoading" element-loading-text="loading" border fit highlight-current-row>
@@ -132,10 +132,10 @@ export default {
   filters: {
   },
   created() {
-    this.fetchData()
+    this.queryProductInfos()
   },
   methods: {
-    fetchData() {
+    queryProductInfos() {
       this.listLoading = true
       getProductList(this.queryParam).then(response => {
         this.productlist = response
@@ -153,8 +153,8 @@ export default {
       var data = Object.assign({}, params)
       addProduct(data).then(response => {
         this.dialogFormVisible = false
+        this.queryProductInfos()
       })
-      this.fetchData()
     },
     updateProduct(product) {
       this.dialogStatus = 'update'
@@ -166,8 +166,8 @@ export default {
       var data = Object.assign({}, this.productParams)
       updateProduct(data).then(response => {
         this.dialogFormVisible = false
+        this.queryProductInfos()
       })
-      this.fetchData()
     },
     raiseInventory(productId) {
       this.modifyInventoryDialog.title='商品入库'
@@ -189,15 +189,16 @@ export default {
       var data = Object.assign({}, this.inventoryParams)
       modifyInventory(data).then(response => {
         this.modifyInventoryDialog.visible = false
+        this.queryProductInfos()
       })
-      this.fetchData()
     },
     deleteProduct(productId) {
       var params = {
         id: productId
       }
-      deleteProduct(params)
-      this.fetchData()
+      deleteProduct(params).then(response => {
+        this.queryProductInfos()
+      })
     }
   }
 }
