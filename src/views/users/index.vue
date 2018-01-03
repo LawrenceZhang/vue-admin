@@ -49,7 +49,7 @@
       </el-table-column>
       <el-table-column align="center" label="到期日" width="110">
         <template scope="scope">
-          {{"-"}}
+          {{scope.row.memShipExpirationTime}}
         </template>
       </el-table-column>
       <el-table-column align="center" label="地址">
@@ -93,11 +93,35 @@
         </el-table-column>
       </el-table>
     </el-dialog>
+    <el-dialog :title="'创建用户'" :visible.sync="createUserDialog.visible">
+      <el-form ref="dataForm" :model="createUserDialog.params" label-position="right" label-width="70px" style='width: 400px; margin-left:50px;'>
+        <el-form-item label="姓名" prop="realname">
+          <el-input v-model="createUserDialog.params.realname"></el-input>
+        </el-form-item>
+        <el-form-item label="性别" prop="sex">
+          <el-radio v-model="createUserDialog.params.sex" label="男">男</el-radio>
+          <el-radio v-model="createUserDialog.params.sex" label="女">女</el-radio>
+        </el-form-item>
+        <el-form-item label="电话号码" prop="mobilephone">
+          <el-input v-model="createUserDialog.params.mobilephone"></el-input>
+        </el-form-item>
+        <el-form-item label="生日" prop="birthday">
+          <el-date-picker v-model="createUserDialog.params.birthday" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" placeholder="选择日期" ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="地址" prop="street">
+          <el-input v-model="createUserDialog.params.street"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="createUserDialog.visible=false">取 消</el-button>
+        <el-button type="primary" @click="doCreateUser">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getUserInfoByAny, getPetInfoByUserId } from "@/api/users";
+import { getUserInfoByAny, getPetInfoByUserId, createUser } from "@/api/users"
 import waves from "@/directive/waves"; // 水波纹指令
 
 export default {
@@ -111,6 +135,10 @@ export default {
       listLoading: false,
       petInfoLoading: false,
       dialogFormVisible: false,
+      createUserDialog: {
+        visible: false,
+        params: {}
+      },
       queryParam: {
         any: ""
       }
@@ -118,7 +146,6 @@ export default {
   },
   filters: {},
   created() {
-    //this.fetchData()
   },
   methods: {
     fetchData() {
@@ -127,13 +154,21 @@ export default {
         .then(response => {
           this.userlist = response;
           for (var j = 0; j < this.userlist.length; j++) {
-            this.userlist[j].edit = false;
+            this.userlist[j].edit = false
           }
-          this.listLoading = false;
+          this.listLoading = false
         })
-        .then(response => {});
+        .then(response => {})
     },
-    createUser() {},
+    createUser() {
+      this.createUserDialog.visible = true
+    },
+    doCreateUser() {
+      createUser(this.createUserDialog.params).then(response => {
+        this.createUserDialog.visible = false
+        this.createUserDialog.params = {}
+      })
+    },
     cellClick(row, column, cell, event) {
       console.log(column);
       if (column.label !== "操作") {
@@ -142,20 +177,20 @@ export default {
           params: {
             userInfo: row
           }
-        });
+        })
       }
     },
     getUserPetInfos(userid_input) {
       this.petlist = [];
-      this.dialogFormVisible = true;
-      this.petInfoLoading = true;
+      this.dialogFormVisible = true
+      this.petInfoLoading = true
       var param = {
         userid: userid_input
       };
       getPetInfoByUserId(param).then(response => {
-        this.petlist = response;
-        this.petInfoLoading = false;
-      });
+        this.petlist = response
+        this.petInfoLoading = false
+      })
     },
     checkout(userId) {}
   }

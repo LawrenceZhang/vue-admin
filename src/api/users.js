@@ -15,3 +15,11 @@ export function getPetInfoByUserId(params) {
     params
   })
 }
+
+export function createUser(data) {
+  return fetch({
+    url: '/user',
+    method: 'post',
+    data
+  })
+}
