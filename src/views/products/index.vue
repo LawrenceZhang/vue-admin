@@ -181,7 +181,7 @@ export default {
       this.modifyInventoryDialog.title='商品出库'
       this.modifyInventoryDialog.status='reduce'
       this.inventoryParams.id = productId
-      this.inventoryParams.type = 'in'
+      this.inventoryParams.type = 'out'
       this.inventoryParams.count = 0
       this.modifyInventoryDialog.visible=true
     },
