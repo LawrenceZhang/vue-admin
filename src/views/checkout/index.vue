@@ -1,163 +1,110 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input @keyup.enter.native="fetchData" style="width: 200px;" class="filter-item" placeholder="昵称，姓名，手机号" v-model="queryParam.any">
-      </el-input>
-      <el-button class="filter-item" type="primary" v-waves icon="el-icon-search" @click="fetchData">搜索</el-button>
-      <el-button @click="createUser">新增</el-button>
+      <el-autocomplete v-model="state4" size="medium" :fetch-suggestions="queryProductList" placeholder="请输入内容" @select="handleSelect"></el-autocomplete>
     </div>
-    <el-table :data="userlist" v-loading.body="listLoading" element-loading-text="loading" @cell-click="cellClick" border fit highlight-current-row>
-      <el-table-column align="center" label='昵称' width="150" >
-        <template scope="scope">
-          {{scope.row.nickName}}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="性别" width="95">
-        <template scope="scope">
-          {{scope.row.sex}}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="姓名" width="95">
-        <template scope="scope">
-          {{scope.row.realName}}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="手机号码" width="125">
-        <template scope="scope">
-          {{scope.row.mobilePhone}}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="生日" width="110">
-        <template scope="scope">
-          {{scope.row.birthday}}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="会员卡类型" width="110">
-        <template scope="scope">
-          {{scope.row.memShipName}}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="折扣" width="95">
-        <template scope="scope">
-          {{scope.row.memShipDiscout}}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="余额" width="95">
-        <template scope="scope">
-          {{scope.row.memShipBalance}}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="到期日" width="110">
-        <template scope="scope">
-          {{"-"}}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="地址">
-        <template scope="scope">
-          {{scope.row.street}}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="操作" width="220">
-        <template scope="scope">
-          <el-button size="small" @click="checkout(scope.row.id)">收银</el-button>
-          <el-button size="small" @click="getUserPetInfos(scope.row.id)">宠物</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-dialog :title="'宠物信息'" :visible.sync="dialogFormVisible">
-      <el-table :data="petlist" v-loading.body="petInfoLoading" element-loading-text="loading" border fit highlight-current-row>
-        <el-table-column align="center" label='名字'>
+    <el-table :data="selectProductList" element-loading-text="loading" sum-text="总计" :summary-method="getSummaries" border show-summary fit highlight-current-row>
+      <el-table-column align="center" label='名称' width="200">
         <template scope="scope">
           {{scope.row.name}}
         </template>
-        </el-table-column>
-        <el-table-column align="center" label='种类' width="150">
+      </el-table-column>
+      <el-table-column align="center" label="条形码" width="200">
         <template scope="scope">
-          {{scope.row.category}}
+          {{scope.row.code}}
         </template>
-        </el-table-column>
-        <el-table-column align="center" label='性别' width="150">
+      </el-table-column>
+      <el-table-column align="center" label="规格" width="125">
         <template scope="scope">
-          {{scope.row.sex}}
+          {{scope.row.size}}
         </template>
-        </el-table-column>
-        <el-table-column align="center" label='生日' width="150">
+      </el-table-column>
+      <el-table-column align="center" label="类型" width="200">
         <template scope="scope">
-          {{scope.row.birthday}}
+          {{scope.row.type}}
         </template>
-        </el-table-column>
-        <el-table-column align="center" label='是否绝育' width="150">
+      </el-table-column>
+      <el-table-column align="center" label="库存" width="110">
         <template scope="scope">
-          {{scope.row.sterilisation?'是':'否'}}
+          {{scope.row.inventory}}
         </template>
-        </el-table-column>
-      </el-table>
-    </el-dialog>
+      </el-table-column>
+      <el-table-column align="center" label="单价" width="120">
+        <template scope="scope">
+          {{scope.row.price}}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="数量" width="110">
+        <template scope="scope">
+          {{scope.row.count}}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="金额" width="110">
+        <template scope="scope">
+          {{scope.row.fee}}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="操作" width="300">
+      </el-table-column>
+    </el-table>
   </div>
 </template>
 
 <script>
-import { getUserInfoByAny, getPetInfoByUserId } from "@/api/users";
-import waves from "@/directive/waves"; // 水波纹指令
+import { getProductList } from "@/api/checkout";
 
 export default {
-  directives: {
-    waves
-  },
   data() {
     return {
-      userlist: [],
-      petlist: [],
-      listLoading: false,
-      petInfoLoading: false,
-      dialogFormVisible: false,
-      queryParam: {
-        any: ""
-      }
+      state4: null,
+      timeout: null,
+      selectProductList: []
     };
   },
   filters: {},
   created() {
-    //this.fetchData()
   },
-  methods: {
-    fetchData() {
-      this.listLoading = true;
-      getUserInfoByAny(this.queryParam)
-        .then(response => {
-          this.userlist = response;
-          for (var j = 0; j < this.userlist.length; j++) {
-            this.userlist[j].edit = false;
-          }
-          this.listLoading = false;
-        })
-        .then(response => {});
-    },
-    createUser() {},
-    cellClick(row, column, cell, event) {
-      console.log(column);
-      if (column.label !== "操作") {
-        this.$router.push({
-          name: "用户详情",
-          params: {
-            userInfo: row
-          }
-        });
+  methods: {  
+    queryProductList(queryString, cb) {
+      var productList = null
+      var queryParam = {
+        any: queryString
       }
+      getProductList(queryParam).then(response => {
+        productList = response
+        for (var i = 0; i < productList.length; i++) {
+          productList[i].value = productList[i].name
+        }
+      })
+
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        console.log(123123123)
+        cb(productList);
+      }, 1000);
     },
-    getUserPetInfos(userid_input) {
-      this.petlist = [];
-      this.dialogFormVisible = true;
-      this.petInfoLoading = true;
-      var param = {
-        userid: userid_input
-      };
-      getPetInfoByUserId(param).then(response => {
-        this.petlist = response;
-        this.petInfoLoading = false;
-      });
+    handleSelect(item) {
+      this.state4 = null
+      for (var i in this.selectProductList) {
+        if (this.selectProductList[i].code == item.code) {
+          this.selectProductList[i].count = this.selectProductList[i].count + 1
+          this.selectProductList[i].fee = this.selectProductList[i].fee + item.price
+          this.selectProductList.push(item)
+          this.selectProductList.pop()
+          return
+        }
+      }
+      item.count = 1
+      item.fee = item.price
+      this.selectProductList.push(item)
     },
-    checkout(userId) {}
+    getSummaries(param) {
+      var sum = 0
+      this.selectProductList.forEach((column) => {
+        sum = sum + column.fee
+      })
+      return ['总计', '', '', '', '', '', '', sum]
+    }
   }
 };
 </script>
